@@ -60,6 +60,33 @@ class App extends Component {
     await this.refreshNotes();
   }
 
+  async addDummyData() {
+    const db = getFirestore(app);
+    const notesCollection = collection(db, "notes");
+    
+    const dummyTodos = [
+      { description: "🏃 Go for a morning run" },
+      { description: "📚 Read 20 pages of current book" },
+      { description: "🛒 Buy groceries for the week" },
+      { description: "💻 Complete React project" },
+      { description: "🎸 Practice guitar for 30 minutes" },
+      { description: "🧹 Clean the apartment" },
+      { description: "📧 Reply to important emails" },
+      { description: "👥 Call family" },
+      { description: "🍳 Meal prep for the week" },
+      { description: "💪 Hit the gym" }
+    ];
+
+    try {
+      for (const todo of dummyTodos) {
+        await addDoc(notesCollection, todo);
+      }
+      await this.refreshNotes(); // Refresh the UI after adding dummy data
+      console.log("Dummy data added successfully!");
+    } catch (error) {
+      console.error("Error adding dummy data: ", error);
+    }
+  }
 
   render() {
     const { notes, newNote } = this.state;
@@ -67,6 +94,15 @@ class App extends Component {
       <div className="container">
         <div className="app-wrapper">
           <h1 className="app-title">Todo List</h1>
+          
+          {notes.length === 0 && (
+            <button 
+              onClick={() => this.addDummyData()}
+              className="dummy-data-button"
+            >
+              Add Sample Todos
+            </button>
+          )}
           
           <div className="input-wrapper">
             <input 
